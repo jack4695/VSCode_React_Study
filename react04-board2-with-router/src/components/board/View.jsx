@@ -12,7 +12,7 @@ function View(props) {
     파라미터의 값을 읽어올수 있는 훅. 별도의 인수없이 선언한다.
   */
   var params = useParams();
-  console.log('파라미터', params.no);
+  // console.log('파라미터', params.no);
 
   /* 
   데이터 배열의 크기만큼 반복하여 조건에 맞는 객체를 찾은 후 반환한다.
@@ -36,6 +36,7 @@ function View(props) {
   let nextNum = 0;
 
   if(readNum-1===0) {
+    // 1페이지로 고정
     prevNum=1;
   }
   else {
@@ -51,11 +52,13 @@ function View(props) {
   }, false);
 
   if(isNextNum===false) {
+    // 현재페이지로 고정
     nextNum = readNum;
   }
 
   const goPrev = () => {
     if(readNum-1===0) {
+      // 1페이지로 고정
       prevNum = 1;
       alert('이전 페이지가 없습니다.')
     }
@@ -64,6 +67,23 @@ function View(props) {
     }
     console.log('prevNum', prevNum);
     props.navigate("/view/"+prevNum);
+  }
+
+  const goNext = () => {
+    nextNum = readNum + 1;
+    let isNextNum = props.boardData.reduce((prev, curr) => {
+      if(curr.no===nextNum) {
+        prev = true;
+      }
+      return prev;
+    }, false);
+    if(isNextNum===false) {
+      // 현재페이지로 고정
+      nextNum = readNum;
+      alert('다음 페이지가 없습니다.');
+    }
+    console.log('nextNum', nextNum);
+    props.navigate("/view/"+nextNum);
   }
 
 
@@ -107,6 +127,14 @@ function View(props) {
     -단, 이전/다음 게시물이 없는 경우 처음/마지막 게시물로 링크 고정.
     -게시물을 추가하더라도 동일하게 구현되어야 함. 
     */}
+    <a href="/" onClick={(e) => {
+      e.preventDefault();
+      goPrev();
+    }}>이전글2</a>
+    <a href="/" onClick={(e) => {
+      e.preventDefault();
+      goNext();
+    }}>다음글2</a>
    </article>
   </>);
 }
