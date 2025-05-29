@@ -1,0 +1,290 @@
+{
+  "results": [
+    {
+      "gender": "male",
+      "name": {
+        "title": "Mr",
+        "first": "Mathis",
+        "last": "Gauthier"
+      },
+      "location": {
+        "street": {
+          "number": 3790,
+          "name": "Argyle St"
+        },
+        "city": "Hampton",
+        "state": "Québec",
+        "country": "Canada",
+        "postcode": "H0A 6Z6",
+        "coordinates": {
+          "latitude": "-70.6138",
+          "longitude": "-87.8280"
+        },
+        "timezone": {
+          "offset": "+10:00",
+          "description": "Eastern Australia, Guam, Vladivostok"
+        }
+      },
+      "email": "mathis.gauthier@example.com",
+      "login": {
+        "uuid": "95e626d2-7677-405c-9be8-1b134bdac4f7",
+        "username": "tinylion198",
+        "password": "redheads",
+        "salt": "ExDCawWY",
+        "md5": "c939d4f6e97726f4582838a310f02c6e",
+        "sha1": "8d9637af0ef754d6883b7930ac53bff4a1194d3c",
+        "sha256": "0c701112e9df4018717c953468031a9fd82cfee94eddfff3e8328a4363c89172"
+      },
+      "dob": {
+        "date": "1986-08-14T16:51:29.816Z",
+        "age": 38
+      },
+      "registered": {
+        "date": "2003-09-07T15:16:03.807Z",
+        "age": 21
+      },
+      "phone": "H68 Q73-9420",
+      "cell": "D75 K67-5016",
+      "id": {
+        "name": "SIN",
+        "value": "205679723"
+      },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/24.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/24.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/24.jpg"
+      },
+      "nat": "CA"
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "Mr",
+        "first": "Maris",
+        "last": "Idrissi"
+      },
+      "location": {
+        "street": {
+          "number": 8418,
+          "name": "Jansoniusplein"
+        },
+        "city": "Kunrade",
+        "state": "Drenthe",
+        "country": "Netherlands",
+        "postcode": "0978 LX",
+        "coordinates": {
+          "latitude": "-49.9784",
+          "longitude": "-163.9330"
+        },
+        "timezone": {
+          "offset": "+2:00",
+          "description": "Kaliningrad, South Africa"
+        }
+      },
+      "email": "maris.idrissi@example.com",
+      "login": {
+        "uuid": "2c86ab90-2a1f-4e82-a35b-865fc4fc953e",
+        "username": "angrydog273",
+        "password": "jeanette",
+        "salt": "blHk0Hzw",
+        "md5": "f3c22dcdbbf4f71999467e832b2c7166",
+        "sha1": "6b2f6827323e562dac79cb6c448aba55bab5d5e8",
+        "sha256": "3abb4329282c47c09e80bebe89f1d8aa88e39e2240cfbb22c604fba4bae59f54"
+      },
+      "dob": {
+        "date": "1971-02-23T06:15:31.109Z",
+        "age": 54
+      },
+      "registered": {
+        "date": "2006-04-20T05:39:58.024Z",
+        "age": 19
+      },
+      "phone": "(0004) 621639",
+      "cell": "(06) 71601741",
+      "id": {
+        "name": "BSN",
+        "value": "13052618"
+      },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/77.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/77.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/77.jpg"
+      },
+      "nat": "NL"
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "Mr",
+        "first": "Estéban",
+        "last": "Schmitt"
+      },
+      "location": {
+        "street": {
+          "number": 794,
+          "name": "Rue de L'Abbé-Carton"
+        },
+        "city": "Lille",
+        "state": "Lot",
+        "country": "France",
+        "postcode": 42556,
+        "coordinates": {
+          "latitude": "9.2899",
+          "longitude": "150.3625"
+        },
+        "timezone": {
+          "offset": "-8:00",
+          "description": "Pacific Time (US & Canada)"
+        }
+      },
+      "email": "esteban.schmitt@example.com",
+      "login": {
+        "uuid": "9c10b5a6-fb1b-4bd7-9fd0-ad7afe9e8e78",
+        "username": "blackkoala954",
+        "password": "buffalo",
+        "salt": "nPihvjlg",
+        "md5": "5c6d7ada5a4b66d61758339652edec47",
+        "sha1": "729be57cc42b3872d2558e4d453984493e03bbe4",
+        "sha256": "5083e8a929777d2dba378f63e97a47eb986d9a81d070488d443cd7a1c08c31dc"
+      },
+      "dob": {
+        "date": "1967-04-23T15:46:24.329Z",
+        "age": 58
+      },
+      "registered": {
+        "date": "2013-09-20T14:04:35.677Z",
+        "age": 11
+      },
+      "phone": "01-82-90-43-72",
+      "cell": "06-10-06-41-60",
+      "id": {
+        "name": "INSEE",
+        "value": "1670329176916 18"
+      },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/4.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/4.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/4.jpg"
+      },
+      "nat": "FR"
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "Mr",
+        "first": "Valdemar",
+        "last": "Rasmussen"
+      },
+      "location": {
+        "street": {
+          "number": 7923,
+          "name": "Overgade"
+        },
+        "city": "Viby Sj.",
+        "state": "Nordjylland",
+        "country": "Denmark",
+        "postcode": 10719,
+        "coordinates": {
+          "latitude": "48.4567",
+          "longitude": "-102.9405"
+        },
+        "timezone": {
+          "offset": "+5:30",
+          "description": "Bombay, Calcutta, Madras, New Delhi"
+        }
+      },
+      "email": "valdemar.rasmussen@example.com",
+      "login": {
+        "uuid": "5cfb00d8-d2b1-42e1-ac95-8851e48a95f8",
+        "username": "redrabbit218",
+        "password": "wolf359",
+        "salt": "uxyzSe8s",
+        "md5": "db8356d6694126e5ed2e933b4a2b5bb9",
+        "sha1": "2b4fab2d6079966a73f376bd712238f7cf067337",
+        "sha256": "a638dd791ec3a4de111d3d1c8f37dafce842895d32e97b7ba4e1d758ed62d93c"
+      },
+      "dob": {
+        "date": "1950-05-21T21:07:37.328Z",
+        "age": 74
+      },
+      "registered": {
+        "date": "2014-01-30T18:16:49.550Z",
+        "age": 11
+      },
+      "phone": "90902810",
+      "cell": "83242123",
+      "id": {
+        "name": "CPR",
+        "value": "210550-9095"
+      },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/31.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/31.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/31.jpg"
+      },
+      "nat": "DK"
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "Mr",
+        "first": "Abdul",
+        "last": "Haller"
+      },
+      "location": {
+        "street": {
+          "number": 1652,
+          "name": "Brunnenstraße"
+        },
+        "city": "Golßen",
+        "state": "Sachsen",
+        "country": "Germany",
+        "postcode": 99887,
+        "coordinates": {
+          "latitude": "-7.1666",
+          "longitude": "1.9284"
+        },
+        "timezone": {
+          "offset": "+5:45",
+          "description": "Kathmandu"
+        }
+      },
+      "email": "abdul.haller@example.com",
+      "login": {
+        "uuid": "ee5bf9d2-0853-4cf4-9c36-754d21389238",
+        "username": "greengorilla644",
+        "password": "trains",
+        "salt": "37RArp2p",
+        "md5": "956ce0beb78a50efba0700d88fb20a60",
+        "sha1": "f41f55d232932d42d486ef1d1012e7b59023241c",
+        "sha256": "bd0f49b02d0f89409864f72e302d2e879fd0b5572b008c4f5bb12cf4c038504a"
+      },
+      "dob": {
+        "date": "1962-03-16T08:51:04.718Z",
+        "age": 63
+      },
+      "registered": {
+        "date": "2005-02-14T14:58:34.376Z",
+        "age": 20
+      },
+      "phone": "0507-5294009",
+      "cell": "0174-0148487",
+      "id": {
+        "name": "SVNR",
+        "value": "58 160362 H 000"
+      },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/37.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/37.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/37.jpg"
+      },
+      "nat": "DE"
+    }
+  ],
+  "info": {
+    "seed": "b9ccee14b8af1005",
+    "results": 5,
+    "page": 1,
+    "version": "1.4"
+  }
+}
