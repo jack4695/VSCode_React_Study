@@ -3,10 +3,40 @@ import './registForm.css';
 import {firestore} from '../../firestoreConfig';
 import {doc, getDoc, setDoc} from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 function Regist() {
 
   const navigate = useNavigate();
+  const [pwValid, setPwValid] = useState(false);
+
+  const [formState, setFormState] = useState({
+    id: '',
+    pw: '',
+    pwCheck: '',
+    name: '',
+    emailId: '',
+    emailDomain: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    postcode: '',
+    addr1: '',
+    addr2: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prev)=> ({...prev, [name] : value}) );
+  }
+
+  // 비밀번호 체크시 span 문구 출력을 위함
+  useEffect(()=> {
+    checkPass();
+  },[formState.pwCheck, formState.pw] )
+
+
+  /* ---------------------------------------------------------------- */
 
   // 회원정보입력. 매개변수는 컬렉션명~이름까지의 정보를 받도록 선언.
   const memberWrite = async (p_id, p_pass, p_name,
@@ -116,16 +146,15 @@ function Regist() {
 
   // 비밀번호 확인 span태그 함수
   const checkPass = () => {
-    const pass = document.getElementById('password').value;
-    const passCheck = document.getElementById('password_check').value;
-    const msgSpan = document.getElementById('pass-msg')
 
-    if(passCheck === '') {
+    let msgSpan =document.getElementById('pass-msg');
+
+    if(formState.pwCheck === '') {
       msgSpan.innerText = '';
       return;
     }
 
-    if(pass === passCheck) {
+    if(formState.pw === formState.pwCheck) {
       msgSpan.innerText = '✔ 비밀번호가 일치합니다.'
       msgSpan.style.color = 'green';
     }
@@ -142,26 +171,19 @@ function Regist() {
       <form onSubmit={(event) => {
         event.preventDefault();
         //폼값 얻기
-        let id = event.target.id.value;
-        let pass = event.target.pass.value;
-        let name = event.target.name.value;
+        let id = formState.id;
+        let pass = formState.pw;
+        let name = formState.name;
 
-        let emailId = event.target.email_id.value; 
-        let emailDomain = event.target.email_domain.value;
+        const { emailId, emailDomain } = formState;
+        const email = `${emailId}@${emailDomain}`;
 
-        let email = emailId + '@' + emailDomain;
+        const { phone1, phone2, phone3 } = formState;
+        const phone = `${phone1}-${phone2}-${phone3}`
 
-        let phone1 = event.target.phone1.value;
-        let phone2 = event.target.phone2.value;
-        let phone3 = event.target.phone3.value;
-
-        let phone = phone1 + '-' + phone2 + '-' + phone3;
-
-        let postcode = event.target.postcode.value;
-        let addr1 = event.target.addr1.value;
-        let addr2 = event.target.addr2.value;
+        const { postcode, addr1, addr2 } = formState;
+        const addr = `${postcode}|${addr1}|${addr2}`
         
-        let addr = postcode + addr1 + ' ' + addr2;
 
         //폼값에 빈값이 있는지 검증
         if(id === '') { 
@@ -192,40 +214,51 @@ function Regist() {
       memberWrite(id, pass, name, email, phone, addr);
 
       // +로그인이 완료상태로 홈화면으로 들어가는 것을 구현하기
+      alert('회원가입이 완료되었습니다.😀')
+
+      navigate('/');
 
       }}>
     <table>
+      <tbody>
         <tr>
             <th>아이디</th>
             <td>
-                <input type="text" id="userid" name="id" />&nbsp;&nbsp;
+                <input type="text" id="userid" name="id" value={formState.id}
+                  onChange={(e)=>handleInputChange(e)} />&nbsp;&nbsp;
                 <button type="button" onClick={checkId}>중복확인</button>
-                <span>&nbsp;+ 4~15자, 첫 영문자, 영문자와 숫자 조합</span><br />
                 <span id="id-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
         </tr>
         <tr>
             <th>비밀번호</th>
-            <td><input type="password" id="password" name="pass" /></td>
+            <td><input type="password" id="password" name="pw"
+              value={formState.pw} onChange={handleInputChange} /></td>
         </tr>
         <tr>
             <th>비밀번호 확인</th>
             <td>
-                <input type="password" id="password_check" name="password_check"
-                onChange={checkPass} />
+                <input type="password" id="password_check" name="pwCheck"
+                  value={formState.pwCheck} onChange={(e)=>{
+                    handleInputChange(e);
+                    // checkPass(e);
+                  }}/>
                 <span>&nbsp;(확인을 위해 다시 입력해 주세요)</span><br />
                 <span id="pass-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
         </tr>
         <tr>
             <th>이름</th>
-            <td><input type="text" id="name" name="name" /></td>
+            <td><input type="text" id="name" name="name"
+              value={formState.name} onChange={handleInputChange} /></td>
         </tr>
         <tr>
             <th>이메일</th>
             <td>
-                <input type="text" name="email_id" style={{width: "100px"}} />
-                @ <input type="text" id="email" name="email_domain" style={{width:"150px"}} /> 
+                <input type="text" name="email_id" style={{width: "100px"}}
+                  value={formState.emailId} onChange={handleInputChange} />
+                @ <input type="text" id="email" name="email_domain" style={{width:"150px"}}
+                  value={formState.emailDomain} onChange={handleInputChange} /> 
                 <select onChange={(e) => emailSelect(e)}>
                   <option value="">직접입력</option>
                   <option value="gmail.com">gmail.com</option>
@@ -241,19 +274,26 @@ function Regist() {
                 <label>
                 <input type="radio" name="email_recv" value="no"  />수신거부
                 </label>
-                <br />
-                <small>* hanmail, net은 수신이 어려울 수 있습니다.</small>
             </td>
         </tr>
         <tr>
             <th>휴대전화</th>
             <td>
                 <input type="text" name="phone1" style={{width:"60px"}}
-                 maxLength={3} onChange={(e)=>{moveFocus(e, 3, "phone2")}} /> -
+                 value={formState.phone1} maxLength={3} onChange={(e)=>{
+                  moveFocus(e, 3, "phone2");
+                  handleInputChange(e);
+                  }} /> -
                 <input type="text" name="phone2" style={{width:"60px"}}
-                 maxLength={4} onChange={(e)=>{moveFocus(e, 4, "phone3")}} /> -
+                 value={formState.phone2} maxLength={4} onChange={(e)=>{
+                  moveFocus(e, 4, "phone3");
+                  handleInputChange(e);
+                  }} /> -
                 <input type="text" name="phone3" style={{width:"60px"}}
-                 maxLength={4} onChange={(e)=>{moveFocus(e, 4, "sms_recv")}} />&nbsp;&nbsp;
+                 value={formState.phone3} maxLength={4} onChange={(e)=>{
+                  moveFocus(e, 4, "sms_recv");
+                  handleInputChange(e);
+                  }} />&nbsp;&nbsp;
                 <label>
                 <input type="radio" name="sms_recv" value="yes" />SMS 수신허용
                 </label>
@@ -265,11 +305,14 @@ function Regist() {
         <tr>
             <th>주소</th>
             <td>
-                <input type="text" name="postcode" style={{width:"90px"}} />&nbsp;
+                <input type="text" name="postcode" style={{width:"90px"}}
+                  value={formState.postcode} onChange={handleInputChange} />&nbsp;
                 <button type="button" onClick={addrSearch}>주소찾기</button> (우편번호)<br />
-                <input type="text" name="addr1" style={{width:"100%", marginTop:"5px"}} />
+                <input type="text" name="addr1" style={{width:"100%", marginTop:"5px"}}
+                  value={formState.addr1} onChange={handleInputChange} />
                 <br />
-                <input type="text" name="addr2" style={{width:"65%", marginTop:"5px"}} />
+                <input type="text" name="addr2" style={{width:"65%", marginTop:"5px"}}
+                  value={formState.addr2} onChange={handleInputChange} />
                 <span>+ 나머지 주소</span>
             </td>
         </tr>
@@ -302,6 +345,7 @@ function Regist() {
                 </select>
             </td>
         </tr>
+      </tbody>
     </table>
 
     <div className="button-group">
