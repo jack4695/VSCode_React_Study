@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 function Regist() {
 
   const navigate = useNavigate();
-  const [pwValid, setPwValid] = useState(false);
+
+  const [emailReadonly, setEmailReadonly] = useState(false);
 
   const [formState, setFormState] = useState({
     id: '',
@@ -38,7 +39,7 @@ function Regist() {
 
   /* ---------------------------------------------------------------- */
 
-  // 회원정보입력. 매개변수는 컬렉션명~이름까지의 정보를 받도록 선언.
+  // 회원정보입력.
   const memberWrite = async (p_id, p_pass, p_name,
     p_email, p_phone, p_addr
   ) => {
@@ -101,11 +102,11 @@ function Regist() {
         // data.zonecode: 우편번호
         // data.roadAddress: 도로명 주소
 
-        // postcode input에 주소 채우기
-        document.querySelector('input[name="postcode"]').value = data.zonecode;
-
-        // addr1 input에 주소 채우기
-        document.querySelector('input[name="addr1"]').value = data.roadAddress;
+        setFormState((prev) => ({
+          ...prev,
+          postcode: data.zonecode,
+          addr1: data.roadAddress
+        }));
 
         // addr2 input으로 포커스 이동
         document.querySelector('input[name="addr2"]').focus();
@@ -130,17 +131,14 @@ function Regist() {
   // 이메일 직접입력 아니면 readonly 처리
   const emailSelect = (e) => {
     const selectedDomain = e.target.value;
-    const domainInput = document.querySelector('input[name="email_domain"]');
-
-    if (selectedDomain === '') {
-      // 직접입력 선택 시
-      domainInput.value = '';
-      domainInput.readOnly = false;
+    
+    if(selectedDomain === '') {
+      setFormState((prev) => ({...prev, emailDomain: ''}));
+      setEmailReadonly(false);
     }
     else {
-      // 선택된 도메인 자동 입력
-      domainInput.value = selectedDomain;
-      domainInput.readOnly = true;
+      setFormState((prev) => ({...prev, emailDomain: selectedDomain}));
+      setEmailReadonly(true);
     }
   }
 
@@ -163,6 +161,8 @@ function Regist() {
       msgSpan.style.color = 'red';
     }
   };
+
+  
 
 
   return (<>
@@ -255,10 +255,11 @@ function Regist() {
         <tr>
             <th>이메일</th>
             <td>
-                <input type="text" name="email_id" style={{width: "100px"}}
+                <input type="text" name="emailId" style={{width: "100px"}}
                   value={formState.emailId} onChange={handleInputChange} />
-                @ <input type="text" id="email" name="email_domain" style={{width:"150px"}}
-                  value={formState.emailDomain} onChange={handleInputChange} /> 
+                @ <input type="text" id="email" name="emailDomain" style={{width:"150px"}}
+                  value={formState.emailDomain} onChange={handleInputChange} 
+                    readOnly={emailReadonly} /> 
                 <select onChange={(e) => emailSelect(e)}>
                   <option value="">직접입력</option>
                   <option value="gmail.com">gmail.com</option>
@@ -291,15 +292,9 @@ function Regist() {
                   }} /> -
                 <input type="text" name="phone3" style={{width:"60px"}}
                  value={formState.phone3} maxLength={4} onChange={(e)=>{
-                  moveFocus(e, 4, "sms_recv");
+                  moveFocus(e, 4, "postcode");
                   handleInputChange(e);
                   }} />&nbsp;&nbsp;
-                <label>
-                <input type="radio" name="sms_recv" value="yes" />SMS 수신허용
-                </label>
-                <label>
-                <input type="radio" name="sms_recv" value="no" />SMS 수신불가
-                </label>
             </td>
         </tr>
         <tr>

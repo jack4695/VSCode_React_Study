@@ -1,58 +1,115 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { firestore } from "../../firestoreConfig";
-import { useEffect, useState } from "react";
+import './registForm.css';
 
-const getUserData = async(id) => {
-  const docRef = doc(firestore, 'members', id);
-  const docSnap = await getDoc(docRef);
+import {firestore} from '../../firestoreConfig';
+import {doc, getDoc, setDoc} from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-  return docSnap;
-}
-
-function Edit(props) {
+function Edit() {
 
   const navigate = useNavigate();
 
-  const [data, setData] = useState();
+  const [emailReadonly, setEmailReadonly] = useState(false);
 
-  // 회원정보입력. 매개변수는 컬렉션명~이름까지의 정보를 받도록 선언.
-  const memberWrite = async (p_id, p_pass, p_name,
-    p_email, p_phone, p_addr
-  ) => {
-    // doc으로 입력을 위한 컬렉션과 도큐먼트를 만든 후 JS객체로 정보 입력
-    await setDoc(doc(firestore, 'members', p_id), {
-      id: p_id,
-      pass: p_pass,
-      name: p_name,
-      email: p_email,
-      phone: p_phone,
-      addr: p_addr,
-    });
-    console.log("회원가입 성공");
+  const [formState, setFormState] = useState({
+    id: '',
+    pw: '',
+    pwCheck: '',
+    name: '',
+    emailId: '',
+    emailDomain: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    postcode: '',
+    addr1: '',
+    addr2: '',
+  });
 
-    navigate('/');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prev)=> ({...prev, [name] : value}) );
   }
 
+  // 비밀번호 체크시 span 문구 출력을 위함
+  useEffect(()=> {
+    checkPass();
+  },[formState.pwCheck, formState.pw] )
 
 
-  useEffect(()=>{
-    const fetchData = async () => {
-      const id = JSON.parse(localStorage.getItem('user'));
-      console.log('id', id);
-      const userData = await getUserData(id);
-      if (userData.exists()) {
-        setData(userData.data());
-      } else {
-        console.log("❌ 해당 사용자 정보가 없습니다.");
+  /* ---------------------------------------------------------------- */
+
+  // 회원정보 가져오기
+  useEffect(() => {
+    const getUserData = async () => {
+      const userId = JSON.parse(localStorage.getItem("user"));
+
+      const docRef = doc(firestore, "members", userId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setFormState(docSnap.data());
       }
+    };
+    getUserData();
+  }, []);
+
+
+
+  // // 회원정보수정
+  // const memberEdit = async (p_id, p_pass, p_name,
+  //   p_email, p_phone, p_addr
+  // ) => {
+  //   // doc으로 입력을 위한 컬렉션과 도큐먼트를 만든 후 JS객체로 정보 입력
+  //   await setDoc(doc(firestore, 'members', p_id), {
+  //     id: p_id,
+  //     pass: p_pass,
+  //     name: p_name,
+  //     email: p_email,
+  //     phone: p_phone,
+  //     addr: p_addr,
+  //   });
+  //   console.log("수정 성공");
+
+  //   navigate('/');
+  // }
+
+  // 중복확인
+  // 같은 아이디가 FireBase에 있는지 확인하기 위한 함수
+  const findId = async (id) => {
+    const docRef = doc(firestore, 'members', id);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.exists(); // 이미 존재하면 true
+  }
+
+  // 중복확인 후 메세지 출력
+  const checkId = async () => {
+    // 1. 입력창에서 현재 아이디 값을 가져오기
+    const inputId = document.getElementById('userid').value;
+
+    const msgSpan = document.getElementById('id-msg');
+
+    // 2. 빈 값인지 검사
+    if (inputId === '') {
+      msgSpan.innerText = '아이디를 입력해주세요.';
+      msgSpan.style.color = 'red';
+      return;
     }
-    fetchData();
 
-    console.log('data', data.phone);
-  },[])
+    // 3. findId() 함수를 이용해서 아이디 존재 여부 확인
+    const isExist = await findId(inputId);
 
-
+    // 4. 존재 여부에 따라 메시지 출력
+    if (isExist) {
+      msgSpan.innerText = '❌ 이미 사용 중인 아이디입니다.';
+      msgSpan.style.color = 'red';
+    }
+    else {
+      msgSpan.innerText = '✅ 사용 가능한 아이디입니다!';
+      msgSpan.style.color = 'green';
+    }
+  };
 
   // 주소찾기 버튼 (다음 카카오 API)
   const addrSearch = () => {
@@ -62,11 +119,11 @@ function Edit(props) {
         // data.zonecode: 우편번호
         // data.roadAddress: 도로명 주소
 
-        // postcode input에 주소 채우기
-        document.querySelector('input[name="postcode"]').value = data.zonecode;
-
-        // addr1 input에 주소 채우기
-        document.querySelector('input[name="addr1"]').value = data.roadAddress;
+        setFormState((prev) => ({
+          ...prev,
+          postcode: data.zonecode,
+          addr1: data.roadAddress
+        }));
 
         // addr2 input으로 포커스 이동
         document.querySelector('input[name="addr2"]').focus();
@@ -91,32 +148,28 @@ function Edit(props) {
   // 이메일 직접입력 아니면 readonly 처리
   const emailSelect = (e) => {
     const selectedDomain = e.target.value;
-    const domainInput = document.querySelector('input[name="email_domain"]');
-
-    if (selectedDomain === '') {
-      // 직접입력 선택 시
-      domainInput.value = '';
-      domainInput.readOnly = false;
+    
+    if(selectedDomain === '') {
+      setFormState((prev) => ({...prev, emailDomain: ''}));
+      setEmailReadonly(false);
     }
     else {
-      // 선택된 도메인 자동 입력
-      domainInput.value = selectedDomain;
-      domainInput.readOnly = true;
+      setFormState((prev) => ({...prev, emailDomain: selectedDomain}));
+      setEmailReadonly(true);
     }
   }
 
   // 비밀번호 확인 span태그 함수
   const checkPass = () => {
-    const pass = document.getElementById('password').value;
-    const passCheck = document.getElementById('password_check').value;
-    const msgSpan = document.getElementById('pass-msg')
 
-    if(passCheck === '') {
+    let msgSpan =document.getElementById('pass-msg');
+
+    if(formState.pwCheck === '') {
       msgSpan.innerText = '';
       return;
     }
 
-    if(pass === passCheck) {
+    if(formState.pw === formState.pwCheck) {
       msgSpan.innerText = '✔ 비밀번호가 일치합니다.'
       msgSpan.style.color = 'green';
     }
@@ -126,33 +179,32 @@ function Edit(props) {
     }
   };
 
+  
+
 
   return (<>
     <div className="signup-container">
-      <h2>🛫&nbsp;내정보수정&nbsp;🛬</h2>
+      <h2>🛫&nbsp;회원가입&nbsp;🛬</h2>
       <form onSubmit={(event) => {
         event.preventDefault();
+
+        getFireData(p_id, p_pass, p_name,
+          p_email, p_phone, p_addr);
+
         //폼값 얻기
-        let id = event.target.id.value;
-        let pass = event.target.pass.value;
-        let name = event.target.name.value;
+        let id = formState.id;
+        let pass = formState.pw;
+        let name = formState.name;
 
-        let emailId = event.target.email_id.value; 
-        let emailDomain = event.target.email_domain.value;
+        const { emailId, emailDomain } = formState;
+        const email = `${emailId}@${emailDomain}`;
 
-        let email = emailId + '@' + emailDomain;
+        const { phone1, phone2, phone3 } = formState;
+        const phone = `${phone1}-${phone2}-${phone3}`
 
-        let phone1 = event.target.phone1.value;
-        let phone2 = event.target.phone2.value;
-        let phone3 = event.target.phone3.value;
-
-        let phone = phone1 + '-' + phone2 + '-' + phone3;
-
-        let postcode = event.target.postcode.value;
-        let addr1 = event.target.addr1.value;
-        let addr2 = event.target.addr2.value;
+        const { postcode, addr1, addr2 } = formState;
+        const addr = `${postcode}|${addr1}|${addr2}`
         
-        let addr = postcode + addr1 + ' ' + addr2;
 
         //폼값에 빈값이 있는지 검증
         if(id === '') { 
@@ -183,40 +235,53 @@ function Edit(props) {
       memberWrite(id, pass, name, email, phone, addr);
 
       // +로그인이 완료상태로 홈화면으로 들어가는 것을 구현하기
+      alert('회원가입이 완료되었습니다.😀')
+
+      navigate('/');
 
       }}>
     <table>
+      <tbody>
         <tr>
             <th>아이디</th>
             <td>
-                <input type="text" id="userid" name="id" />&nbsp;&nbsp;
-                <button type="button" disabled>중복확인</button>
-                <span>&nbsp;+ 4~15자, 첫 영문자, 영문자와 숫자 조합</span><br />
+                <input type="text" id="userid" name="id" value={formState.id}
+                  onChange={(e)=>handleInputChange(e)}
+                  readOnly />&nbsp;&nbsp;
+                <button type="button" onClick={checkId}>중복확인</button>
                 <span id="id-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
         </tr>
         <tr>
             <th>비밀번호</th>
-            <td><input type="password" id="password" name="pass" /></td>
+            <td><input type="password" id="password" name="pw"
+              value={formState.pw} onChange={handleInputChange} /></td>
         </tr>
         <tr>
             <th>비밀번호 확인</th>
             <td>
-                <input type="password" id="password_check" name="password_check"
-                onChange={checkPass} />
+                <input type="password" id="password_check" name="pwCheck"
+                  value={formState.pwCheck} onChange={(e)=>{
+                    handleInputChange(e);
+                    // checkPass(e);
+                  }}/>
                 <span>&nbsp;(확인을 위해 다시 입력해 주세요)</span><br />
                 <span id="pass-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
         </tr>
         <tr>
             <th>이름</th>
-            <td><input type="text" id="name" name="name" /></td>
+            <td><input type="text" id="name" name="name"
+              value={formState.name} onChange={handleInputChange} /></td>
         </tr>
         <tr>
             <th>이메일</th>
             <td>
-                <input type="text" name="email_id" style={{width: "100px"}} />
-                @ <input type="text" id="email" name="email_domain" style={{width:"150px"}} /> 
+                <input type="text" name="emailId" style={{width: "100px"}}
+                  value={formState.emailId} onChange={handleInputChange} />
+                @ <input type="text" id="email" name="emailDomain" style={{width:"150px"}}
+                  value={formState.emailDomain} onChange={handleInputChange} 
+                    readOnly={emailReadonly} /> 
                 <select onChange={(e) => emailSelect(e)}>
                   <option value="">직접입력</option>
                   <option value="gmail.com">gmail.com</option>
@@ -232,35 +297,39 @@ function Edit(props) {
                 <label>
                 <input type="radio" name="email_recv" value="no"  />수신거부
                 </label>
-                <br />
-                <small>* hanmail, net은 수신이 어려울 수 있습니다.</small>
             </td>
         </tr>
         <tr>
             <th>휴대전화</th>
             <td>
                 <input type="text" name="phone1" style={{width:"60px"}}
-                 maxLength={3} onChange={(e)=>{moveFocus(e, 3, "phone2")}} /> -
+                 value={formState.phone1} maxLength={3} onChange={(e)=>{
+                  moveFocus(e, 3, "phone2");
+                  handleInputChange(e);
+                  }} /> -
                 <input type="text" name="phone2" style={{width:"60px"}}
-                 maxLength={4} onChange={(e)=>{moveFocus(e, 4, "phone3")}} /> -
+                 value={formState.phone2} maxLength={4} onChange={(e)=>{
+                  moveFocus(e, 4, "phone3");
+                  handleInputChange(e);
+                  }} /> -
                 <input type="text" name="phone3" style={{width:"60px"}}
-                 maxLength={4} onChange={(e)=>{moveFocus(e, 4, "sms_recv")}} />&nbsp;&nbsp;
-                <label>
-                <input type="radio" name="sms_recv" value="yes" />SMS 수신허용
-                </label>
-                <label>
-                <input type="radio" name="sms_recv" value="no" />SMS 수신불가
-                </label>
+                 value={formState.phone3} maxLength={4} onChange={(e)=>{
+                  moveFocus(e, 4, "postcode");
+                  handleInputChange(e);
+                  }} />&nbsp;&nbsp;
             </td>
         </tr>
         <tr>
             <th>주소</th>
             <td>
-                <input type="text" name="postcode" style={{width:"90px"}} />&nbsp;
+                <input type="text" name="postcode" style={{width:"90px"}}
+                  value={formState.postcode} onChange={handleInputChange} />&nbsp;
                 <button type="button" onClick={addrSearch}>주소찾기</button> (우편번호)<br />
-                <input type="text" name="addr1" style={{width:"100%", marginTop:"5px"}} />
+                <input type="text" name="addr1" style={{width:"100%", marginTop:"5px"}}
+                  value={formState.addr1} onChange={handleInputChange} />
                 <br />
-                <input type="text" name="addr2" style={{width:"65%", marginTop:"5px"}} />
+                <input type="text" name="addr2" style={{width:"65%", marginTop:"5px"}}
+                  value={formState.addr2} onChange={handleInputChange} />
                 <span>+ 나머지 주소</span>
             </td>
         </tr>
@@ -293,6 +362,7 @@ function Edit(props) {
                 </select>
             </td>
         </tr>
+      </tbody>
     </table>
 
     <div className="button-group">
@@ -300,6 +370,7 @@ function Edit(props) {
     </div>
 </form>
     </div>
-  </>); 
+  </>);
 }
-export default Edit; 
+
+export default Edit;
