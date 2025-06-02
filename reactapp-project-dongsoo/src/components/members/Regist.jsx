@@ -32,12 +32,11 @@ function Regist() {
   }
 
   // 비밀번호 체크시 span 문구 출력을 위함
-  useEffect(()=> {
+  useEffect(()=> {0
     checkPass();
   },[formState.pwCheck, formState.pw] )
 
 
-  /* ---------------------------------------------------------------- */
 
   // 회원정보입력.
   const memberWrite = async (p_id, p_pass, p_name,

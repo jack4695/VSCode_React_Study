@@ -48,7 +48,28 @@ function Edit() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setFormState(docSnap.data());
+        const data = docSnap.data();
+
+        const [emailId, emailDomain] = data.email.split('@');
+        const [phone1, phone2, phone3] = data.phone.split('-');
+        const [postcode, addr1, addr2] = data.addr.split('|');
+
+        setFormState({
+          id: data.id,
+          pw: data.pass,
+          pwCheck: '',
+          name: data.name,
+          emailId,
+          emailDomain,
+          phone1,
+          phone2,
+          phone3,
+          postcode,
+          addr1,
+          addr2,
+        });
+
+
       }
     };
     getUserData();
@@ -56,60 +77,26 @@ function Edit() {
 
 
 
-  // // 회원정보수정
-  // const memberEdit = async (p_id, p_pass, p_name,
-  //   p_email, p_phone, p_addr
-  // ) => {
-  //   // doc으로 입력을 위한 컬렉션과 도큐먼트를 만든 후 JS객체로 정보 입력
-  //   await setDoc(doc(firestore, 'members', p_id), {
-  //     id: p_id,
-  //     pass: p_pass,
-  //     name: p_name,
-  //     email: p_email,
-  //     phone: p_phone,
-  //     addr: p_addr,
-  //   });
-  //   console.log("수정 성공");
+  // 회원정보수정
+  const memberEdit = async () => {
+    const userId = JSON.parse(localStorage.getItem("user"));
 
-  //   navigate('/');
-  // }
+    const docRef = doc(firestore, "members", userId);
 
-  // 중복확인
-  // 같은 아이디가 FireBase에 있는지 확인하기 위한 함수
-  const findId = async (id) => {
-    const docRef = doc(firestore, 'members', id);
-    const docSnap = await getDoc(docRef);
+    await setDoc(docRef, {
+      id: formState.id,
+      pass: formState.pw,
+      name: formState.name,
+      email: `${formState.emailId}@${formState.emailDomain}`,
+      phone: `${formState.phone1}-${formState.phone2}-${formState.phone3}`,
+      addr: `${formState.postcode}|${formState.addr1}|${formState.addr2}`,
+    });
 
-    return docSnap.exists(); // 이미 존재하면 true
-  }
+    console.log("수정 성공");
 
-  // 중복확인 후 메세지 출력
-  const checkId = async () => {
-    // 1. 입력창에서 현재 아이디 값을 가져오기
-    const inputId = document.getElementById('userid').value;
+  } 
 
-    const msgSpan = document.getElementById('id-msg');
 
-    // 2. 빈 값인지 검사
-    if (inputId === '') {
-      msgSpan.innerText = '아이디를 입력해주세요.';
-      msgSpan.style.color = 'red';
-      return;
-    }
-
-    // 3. findId() 함수를 이용해서 아이디 존재 여부 확인
-    const isExist = await findId(inputId);
-
-    // 4. 존재 여부에 따라 메시지 출력
-    if (isExist) {
-      msgSpan.innerText = '❌ 이미 사용 중인 아이디입니다.';
-      msgSpan.style.color = 'red';
-    }
-    else {
-      msgSpan.innerText = '✅ 사용 가능한 아이디입니다!';
-      msgSpan.style.color = 'green';
-    }
-  };
 
   // 주소찾기 버튼 (다음 카카오 API)
   const addrSearch = () => {
@@ -184,58 +171,15 @@ function Edit() {
 
   return (<>
     <div className="signup-container">
-      <h2>🛫&nbsp;회원가입&nbsp;🛬</h2>
+      <h2>🛫&nbsp;내 정보&nbsp;🛬</h2>
       <form onSubmit={(event) => {
         event.preventDefault();
 
-        getFireData(p_id, p_pass, p_name,
-          p_email, p_phone, p_addr);
-
-        //폼값 얻기
-        let id = formState.id;
-        let pass = formState.pw;
-        let name = formState.name;
-
-        const { emailId, emailDomain } = formState;
-        const email = `${emailId}@${emailDomain}`;
-
-        const { phone1, phone2, phone3 } = formState;
-        const phone = `${phone1}-${phone2}-${phone3}`
-
-        const { postcode, addr1, addr2 } = formState;
-        const addr = `${postcode}|${addr1}|${addr2}`
         
+      //회원정보 수정
+      memberEdit();
 
-        //폼값에 빈값이 있는지 검증
-        if(id === '') { 
-            alert('아이디를 입력하세요'); 
-            return; 
-        }
-        if(pass === '') { 
-            alert('비밀번호를 입력하세요'); 
-            return; 
-        }
-        if(name === '') { 
-            alert('이름을 입력하세요'); 
-            return; 
-        }
-        if(emailId === '' || emailDomain === '') { 
-            alert('이메일을 입력하세요'); 
-            return; 
-        }
-        if(phone1 === '' || phone2 === '' || phone3 === '') { 
-            alert('전화번호를 입력하세요'); 
-            return; 
-        }
-        if(addr1 === '' || addr2 === '') { 
-            alert('주소를 입력하세요'); 
-            return; 
-        }
-      //회원정보 추가
-      memberWrite(id, pass, name, email, phone, addr);
-
-      // +로그인이 완료상태로 홈화면으로 들어가는 것을 구현하기
-      alert('회원가입이 완료되었습니다.😀')
+      alert('회원정보 수정이 완료되었습니다.😊')
 
       navigate('/');
 
@@ -248,14 +192,13 @@ function Edit() {
                 <input type="text" id="userid" name="id" value={formState.id}
                   onChange={(e)=>handleInputChange(e)}
                   readOnly />&nbsp;&nbsp;
-                <button type="button" onClick={checkId}>중복확인</button>
                 <span id="id-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
         </tr>
         <tr>
             <th>비밀번호</th>
             <td><input type="password" id="password" name="pw"
-              value={formState.pw} onChange={handleInputChange} /></td>
+              value={formState.pw} onChange={handleInputChange} required/></td>
         </tr>
         <tr>
             <th>비밀번호 확인</th>
@@ -264,7 +207,7 @@ function Edit() {
                   value={formState.pwCheck} onChange={(e)=>{
                     handleInputChange(e);
                     // checkPass(e);
-                  }}/>
+                  }} required/>
                 <span>&nbsp;(확인을 위해 다시 입력해 주세요)</span><br />
                 <span id="pass-msg" style={{ fontWeight: 'bold' }}></span>
             </td>
@@ -366,7 +309,7 @@ function Edit() {
     </table>
 
     <div className="button-group">
-        <button type="submit">가입하기</button>
+        <button type="submit">수정하기</button>
     </div>
 </form>
     </div>

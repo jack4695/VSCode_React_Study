@@ -37,18 +37,19 @@ function TopNavi(props) {
             <span className="navbar-toggler-icon"></span></button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                  <NavLink to='/edit'><li className="nav-item"><div className="nav-link" href="#!">내정보수정</div></li></NavLink>
                   
                   <NavLink to='/'><li className="nav-item"><div className="nav-link active" aria-current="page" href="#!">
                     홈</div></li></NavLink>
                   
-                  {inLogin ? (
+                  {inLogin ? (<>
+                    <NavLink to='/edit'><li className="nav-item"><div className="nav-link" href="#!"
+                      >내정보</div></li></NavLink>
                     <NavLink to='/'><li className="nav-item"><div className="nav-link" href="#!"
                       onClick={goLogout}>로그아웃</div></li></NavLink>
-                  ) : (
+                  </>) : (<>
                     <NavLink to='/login'><li className="nav-item"><div className="nav-link" href="#!">로그인</div></li></NavLink>
-                  )}
                   <NavLink to='/regist'><li className="nav-item"><div className="nav-link" href="#!">회원가입</div></li></NavLink>
+                  </>)}
                   {/* 게시판 메뉴 */}
                   <li className="nav-item dropdown"
                     onMouseEnter={() => setShowBoardMenu(true)}
