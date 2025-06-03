@@ -11,6 +11,7 @@ function Regist() {
 
   const [emailReadonly, setEmailReadonly] = useState(false);
 
+  // 🚩 회원가입 폼 전체를 하나의 객체에 담아서 상태 관리
   const [formState, setFormState] = useState({
     id: '',
     pw: '',
@@ -26,19 +27,128 @@ function Regist() {
     addr2: '',
   });
 
+  /*  🚩 입력값이 바뀔 때마다 실행, 기존 상태인 formState를 복사해서(...prev)로
+   바뀐부분만 새로 업데이트! */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev)=> ({...prev, [name] : value}) );
   }
+  
+  
+  // 중복확인
+  // 같은 아이디가 FireBase에 있는지 확인하기 위한 함수
+  const findId = async (id) => {
+    const docRef = doc(firestore, 'members', id);
+    const docSnap = await getDoc(docRef);
+    
+    return docSnap.exists(); // 이미 존재하면 true
+  }
+  
+  // 중복확인 후 메세지 출력
+  const checkId = async () => {
+    // 1. 입력창에서 현재 아이디 값을 가져오기
+    const inputId = document.getElementById('userid').value;
+    
+    const msgSpan = document.getElementById('id-msg');
+    
+    // 2. 빈 값인지 검사
+    if (inputId === '') {
+      msgSpan.innerText = '아이디를 입력해주세요.';
+      msgSpan.style.color = 'red';
+      return;
+    }
+    
+    // 3. findId() 함수를 이용해서 아이디 존재 여부 확인
+    const isExist = await findId(inputId);
+    
+    // 4. 존재 여부에 따라 메시지 출력
+    if (isExist) {
+      msgSpan.innerText = '❌ 이미 사용 중인 아이디입니다.';
+      msgSpan.style.color = 'red';
+    }
+    else {
+      msgSpan.innerText = '✅ 사용 가능한 아이디입니다!';
+      msgSpan.style.color = 'green';
+      setFormState(true);
+    }
+  };
+  
+
+  // 비밀번호 확인 span태그 함수
+  const checkPass = () => {
+
+    let msgSpan =document.getElementById('pass-msg');
+    
+    if(formState.pwCheck === '') {
+      msgSpan.innerText = '';
+      return;
+    }
+    
+    if(formState.pw === formState.pwCheck) {
+      msgSpan.innerText = '✔ 비밀번호가 일치합니다.'
+      msgSpan.style.color = 'green';
+    }
+    else {
+      msgSpan.innerText = '❗ 비밀번호가 일치하지 않습니다.'
+      msgSpan.style.color = 'red';
+    }
+  };
 
   // 비밀번호 체크시 span 문구 출력을 위함
-  useEffect(()=> {0
+  useEffect(()=> {
     checkPass();
   },[formState.pwCheck, formState.pw] )
+  
 
+    // 이메일 직접입력 아니면 readonly 처리
+  const emailSelect = (e) => {
+    const selectedDomain = e.target.value;
+    
+    if(selectedDomain === '') {
+      setFormState((prev) => ({...prev, emailDomain: ''}));
+      setEmailReadonly(false);
+    }
+    else {
+      setFormState((prev) => ({...prev, emailDomain: selectedDomain}));
+      setEmailReadonly(true);
+    }
+  }
 
-
-  // 회원정보입력.
+    // 전화번호 3-4-4 포커스 이동시키는 함수
+  const moveFocus = (e, maxLength, nextInputName) => {
+    const current = e.target; // 지금 입력 중인 그 input 박스
+    
+    if (current.value.length >= maxLength) {
+      const form = current.form;
+      const nextInput = form[nextInputName];
+      
+      if (nextInput) {
+        nextInput.focus(); // 다음 입력창으로 포커스 이동
+      }
+    }
+  }
+  
+  // 주소찾기 버튼 (다음 카카오 API)
+  const addrSearch = () => {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        // 주소 데이터를 받아오는 콜백
+        // data.zonecode: 우편번호
+        // data.roadAddress: 도로명 주소
+        
+        setFormState((prev) => ({
+          ...prev,
+          postcode: data.zonecode,
+          addr1: data.roadAddress
+        }));
+        
+        // addr2 input으로 포커스 이동
+        document.querySelector('input[name="addr2"]').focus();
+      }
+    }).open();
+  };
+  
+   //  파이어베이스에 회원정보 저장.
   const memberWrite = async (p_id, p_pass, p_name,
     p_email, p_phone, p_addr
   ) => {
@@ -55,114 +165,7 @@ function Regist() {
 
     navigate('/');
   }
-
-  // 중복확인
-  // 같은 아이디가 FireBase에 있는지 확인하기 위한 함수
-  const findId = async (id) => {
-    const docRef = doc(firestore, 'members', id);
-    const docSnap = await getDoc(docRef);
-
-    return docSnap.exists(); // 이미 존재하면 true
-  }
-
-  // 중복확인 후 메세지 출력
-  const checkId = async () => {
-    // 1. 입력창에서 현재 아이디 값을 가져오기
-    const inputId = document.getElementById('userid').value;
-
-    const msgSpan = document.getElementById('id-msg');
-
-    // 2. 빈 값인지 검사
-    if (inputId === '') {
-      msgSpan.innerText = '아이디를 입력해주세요.';
-      msgSpan.style.color = 'red';
-      return;
-    }
-
-    // 3. findId() 함수를 이용해서 아이디 존재 여부 확인
-    const isExist = await findId(inputId);
-
-    // 4. 존재 여부에 따라 메시지 출력
-    if (isExist) {
-      msgSpan.innerText = '❌ 이미 사용 중인 아이디입니다.';
-      msgSpan.style.color = 'red';
-    }
-    else {
-      msgSpan.innerText = '✅ 사용 가능한 아이디입니다!';
-      msgSpan.style.color = 'green';
-    }
-  };
-
-  // 주소찾기 버튼 (다음 카카오 API)
-  const addrSearch = () => {
-    new daum.Postcode({
-      oncomplete: function(data) {
-        // 주소 데이터를 받아오는 콜백
-        // data.zonecode: 우편번호
-        // data.roadAddress: 도로명 주소
-
-        setFormState((prev) => ({
-          ...prev,
-          postcode: data.zonecode,
-          addr1: data.roadAddress
-        }));
-
-        // addr2 input으로 포커스 이동
-        document.querySelector('input[name="addr2"]').focus();
-      }
-    }).open();
-  };
-
-  // 포커스 이동시키는 함수
-  const moveFocus = (e, maxLength, nextInputName) => {
-    const current = e.target; // 지금 입력 중인 그 input 박스
-
-    if (current.value.length >= maxLength) {
-      const form = current.form;
-      const nextInput = form[nextInputName];
-
-      if (nextInput) {
-        nextInput.focus(); // 다음 입력창으로 포커스 이동
-      }
-    }
-  }
-
-  // 이메일 직접입력 아니면 readonly 처리
-  const emailSelect = (e) => {
-    const selectedDomain = e.target.value;
-    
-    if(selectedDomain === '') {
-      setFormState((prev) => ({...prev, emailDomain: ''}));
-      setEmailReadonly(false);
-    }
-    else {
-      setFormState((prev) => ({...prev, emailDomain: selectedDomain}));
-      setEmailReadonly(true);
-    }
-  }
-
-  // 비밀번호 확인 span태그 함수
-  const checkPass = () => {
-
-    let msgSpan =document.getElementById('pass-msg');
-
-    if(formState.pwCheck === '') {
-      msgSpan.innerText = '';
-      return;
-    }
-
-    if(formState.pw === formState.pwCheck) {
-      msgSpan.innerText = '✔ 비밀번호가 일치합니다.'
-      msgSpan.style.color = 'green';
-    }
-    else {
-      msgSpan.innerText = '❗ 비밀번호가 일치하지 않습니다.'
-      msgSpan.style.color = 'red';
-    }
-  };
-
   
-
 
   return (<>
     <div className="signup-container">
@@ -240,7 +243,6 @@ function Regist() {
                 <input type="password" id="password_check" name="pwCheck"
                   value={formState.pwCheck} onChange={(e)=>{
                     handleInputChange(e);
-                    // checkPass(e);
                   }}/>
                 <span>&nbsp;(확인을 위해 다시 입력해 주세요)</span><br />
                 <span id="pass-msg" style={{ fontWeight: 'bold' }}></span>

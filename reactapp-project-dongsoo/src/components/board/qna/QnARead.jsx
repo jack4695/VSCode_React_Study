@@ -1,10 +1,13 @@
-import './FreeRead.css';
+import './QnARead.css';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {firestore} from '../../../firestoreConfig';
-import {addDoc, collection, deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, where} from 'firebase/firestore';
 
-function FreeRead(props) {
+import CommentModal from './CommentModal';
+import CommentList from './CommentList';
+
+function QnARead(props) {
 
   const navigate = useNavigate();
   
@@ -22,6 +25,8 @@ function FreeRead(props) {
 
   const [isMine, setIsMine] = useState(false);
 
+  const [comments, setComments] = useState([]);
+
 
     // 로그인 상태 + 게시글이 작성자 본인인지 확인
    // 회원정보 가져오기 및 formState.writer에 설정
@@ -33,7 +38,7 @@ function FreeRead(props) {
       setInLogin(false);
     }
     const getPostData = async () => {
-      const docRef = doc(firestore, "freeboard", id);
+      const docRef = doc(firestore, "qnaboard", id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -67,6 +72,27 @@ function FreeRead(props) {
     }
 
   }
+
+
+  // 댓글 새로고침 (props로 넘겨줄거임)
+  const fetchComments = async () => {
+    const q = query(
+      collection(firestore, 'comments'),
+      where('id', '==', id),
+      orderBy('createAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    const commentData = querySnapshot.docs.map(doc => ({
+      ...doc.data(),
+      docId: doc.id,
+    }));
+    setComments(commentData);
+  };
+
+  
+  useEffect(() => {
+    fetchComments();
+  }, [id]); // id가 바뀔 때마다 댓글 다시 불러오기
 
   return (<>
     <div className="write-container">
@@ -104,17 +130,24 @@ function FreeRead(props) {
         </div>
         <div className="form-actions">
         {isMine ? (<>
-          <Link to={`/free/edit/${id}`}>
+          <Link to={`/qna/edit/${id}`}>
             <button type="button" className="btn btn-primary1">수정</button>
           </Link>
           <button type="button" className="btn btn-primary2"
             onClick={postDelete}>삭제</button>
         </>) : (<>
-          <Link to="/free" className="btn btn-secondary">목록</Link>
+          <Link to="/qna" className="btn btn-secondary">목록</Link>
         </>)}
         </div>
       </form>
     </div>
+
+    {/* 댓글 작성 버튼 */}
+    <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">
+      댓글 작성
+    </button>
+    <CommentModal id={id} fetchComments={fetchComments} />
+    <CommentList comments={comments} fetchComments={fetchComments} />
   </>); 
 }
-export default FreeRead; 
+export default QnARead; 

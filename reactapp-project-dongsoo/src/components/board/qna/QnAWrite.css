@@ -1,0 +1,99 @@
+/* FreeBoardWrite.css */
+.write-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 30px;
+  max-width: 700px; /* 컨테이너 너비 조정 */
+  margin: 40px auto; /* 중앙 정렬 */
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 */
+}
+
+.write-title {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 30px;
+  text-align: center;
+  border-bottom: 2px solid #007bff; /* 제목 아래 파란색 선 */
+  padding-bottom: 10px;
+}
+
+.write-form .form-group {
+  margin-bottom: 20px;
+}
+
+.write-form label {
+  display: block; /* 라벨을 블록 레벨로 만들어 위쪽에 위치 */
+  font-weight: 600; /* 라벨 글씨 두껍게 */
+  color: #555;
+  margin-bottom: 8px; /* 라벨과 입력 필드 사이 간격 */
+  font-size: 16px;
+}
+
+.write-form input[type="text"],
+.write-form textarea {
+  width: calc(100% - 24px); /* 패딩과 보더를 뺀 실제 너비 */
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #333;
+  box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.write-form input[type="text"]:focus,
+.write-form textarea:focus {
+  border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* 포커스 시 그림자 효과 */
+  outline: none; /* 기본 아웃라인 제거 */
+}
+
+.write-form textarea {
+  resize: vertical; /* textarea는 세로 크기만 조절 가능 */
+  min-height: 180px; /* 최소 높이 */
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
+  gap: 15px; /* 버튼 사이 간격 */
+  margin-top: 30px;
+}
+
+/* 기존 FreeBoard.css의 버튼 스타일 재사용 */
+.btn {
+  display: inline-flex; /* 텍스트 정렬을 위해 flexbox 사용 */
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  padding: 12px 25px;
+  font-size: 17px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  text-decoration: none; /* Link 태그의 밑줄 제거 */
+  box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* 회색 계열 */
+  color: white;
+  border: 1px solid #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}

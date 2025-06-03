@@ -12,13 +12,20 @@ import Login from './components/members/Login';
 import Edit from './components/members/Edit';
 
 import FreeBoard from './components/board/free/FreeBoard';
-import QnABoard from './components/board/qna/QnABoard';
-import DataBoard from './components/board/data/DataBoard';
 import FreeWrite from './components/board/free/FreeWrite';
 import FreeRead from './components/board/free/FreeRead';
+import FreeEdit from './components/board/free/FreeEdit';
+
+import QnABoard from './components/board/qna/QnABoard';
+import QnARead from './components/board/qna/QnARead';
+import QnAEdit from './components/board/qna/QnAEdit';
+import QnAWrite from './components/board/qna/QnAWrite';
 
 
+import DataBoard from './components/board/data/DataBoard';
 
+
+// 🚩레이아웃
 const Layout = () => {
   return (<>
     <div>
@@ -31,6 +38,7 @@ const Layout = () => {
   </>);
 }
 
+// 🚩게시판 날짜 및 시간을 표현하는 함수, 자식컴포넌트에 props로 전달하여 사용
 const formatDate = (timestamp) => {
   const now = new Date();
   const target = timestamp.toDate();
@@ -68,11 +76,18 @@ function App() {
         <Route path='/edit' element={<Edit />} />
 
         {/* 자유게시판 */}
-        <Route path='free' element={<FreeBoard formatDate={formatDate} />} />
-          <Route path='free/read/:id' element={<FreeRead />} />
-          <Route path='free/write' element={<FreeWrite />} />
+        <Route path='/free' element={<FreeBoard formatDate={formatDate} />} />
+          <Route path='/free/read/:id' element={<FreeRead />} />
+          <Route path='/free/edit/:id' element={<FreeEdit />} />
+          <Route path='/free/write' element={<FreeWrite />} />
 
-        <Route path='/qna' element={<QnABoard />} />
+        {/* QnA게시판 */}
+        <Route path='/qna' element={<QnABoard formatDate={formatDate} />} />
+          <Route path='/qna/read/:id' element={<QnARead />} />
+          <Route path='/qna/edit/:id' element={<QnAEdit />} />
+          <Route path='/qna/write' element={<QnAWrite />} />
+
+
         <Route path='/data' element={<DataBoard />} />
         <Route path='/chat' element={<Chat />} />
 

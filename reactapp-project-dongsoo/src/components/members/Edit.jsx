@@ -174,14 +174,13 @@ function Edit() {
       <h2>🛫&nbsp;내 정보&nbsp;🛬</h2>
       <form onSubmit={(event) => {
         event.preventDefault();
-
         
-      //회원정보 수정
-      memberEdit();
+        //회원정보 수정
+        memberEdit();
 
-      alert('회원정보 수정이 완료되었습니다.😊')
+        alert('회원정보 수정이 완료되었습니다.😊')
 
-      navigate('/');
+        navigate('/');
 
       }}>
     <table>
