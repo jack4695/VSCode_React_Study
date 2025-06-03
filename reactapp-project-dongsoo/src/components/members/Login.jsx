@@ -9,23 +9,24 @@ import { useNavigate } from "react-router-dom";
 function Login(props) {
   const navigate = useNavigate();
   /* 
-  << localStorage 기본 문법 >>
+  🚩<< localStorage 기본 문법 >>
  
- 🚩 저장
+ 저장 -> (로그인할때)
   :	localStorage.setItem(key, value)	key에 value를 저장함
- 불러오기
+ 불러오기 -> (당사자만 수정,삭제 가능하도록)
   :	localStorage.getItem(key)	해당 key의 값을 불러옴
- 전체 삭제
+ 전체 삭제 -> (로그아웃할때)
   :	localStorage.clear()	저장된 모든 데이터 삭제
   */
 
   const [userId, setUserId] = useState("");
   const [userPass, setUserPass] = useState("");
 
-  // 🔹 파이어베이스에서 가져온 데이터를 저장할 상태
+  // 파이어베이스에서 가져온 데이터를 저장할 상태
   const [fireData, setFireData] = useState(null);
 
-  // 파이어 데이터(ID, PASS) 가지고 오는 비동기 함수
+
+  // 1. 파이어 데이터(ID, PASS) 가지고 오는 비동기 함수
   const getFireId = async (inputId) => {
     const docRef = doc(firestore, "members", inputId)
     const docSnap = await getDoc(docRef);
@@ -44,13 +45,13 @@ function Login(props) {
       console.log('문서가 존재하지 않음');
       return null;   // 아이디 또는 비밀번호가 입력없음
     }
-    
   }
 
-  // 로그인 버튼 클릭시, 아이디를 로컬스토리지에 저장, ID,PW검증 후 로그인 처리
+
+  // 2. 로그인 버튼 클릭시, ID,PW검증 후 로그인 처리
   const doLogin = async (e) => {
     e.preventDefault();
-    const result = await getFireId(userId); // 🔹 Firestore에서 데이터 가져오기 → fireData 상태 바뀜
+    const result = await getFireId(userId); // Firestore에서 데이터 가져오기 → fireData 상태 바뀜
     const msgSpan = document.getElementById('error-msg');
 
     
@@ -66,6 +67,7 @@ function Login(props) {
     console.log('가져온거', fireId, firePass );
     
     if (userId === fireId && userPass === firePass) {
+      // 🚩아이디를 로컬스토리지에 저장
       localStorage.setItem("user", JSON.stringify(userId));
       alert("로그인 성공👋")
       navigate('/');

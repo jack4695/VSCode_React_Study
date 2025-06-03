@@ -9,6 +9,9 @@ function Regist() {
 
   const navigate = useNavigate();
 
+  // 🚩중복확인 상태
+  const [isIdChecked, setIsIdChecked] = useState(false);
+
   const [emailReadonly, setEmailReadonly] = useState(false);
 
   // 🚩 회원가입 폼 전체를 하나의 객체에 담아서 상태 관리
@@ -27,16 +30,19 @@ function Regist() {
     addr2: '',
   });
 
-  /*  🚩 입력값이 바뀔 때마다 실행, 기존 상태인 formState를 복사해서(...prev)로
+  /*  🚩 입력값이 바뀔 때마다 실행, 기존 상태인 formState를 (...prev)복사해서,,
    바뀐부분만 새로 업데이트! */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev)=> ({...prev, [name] : value}) );
+
+    if (name === 'id') {
+    setIsIdChecked(false); // 아이디가 바뀌면 다시 확인 중복확인 해야함
+  }
   }
   
   
-  // 중복확인
-  // 같은 아이디가 FireBase에 있는지 확인하기 위한 함수
+  // 같은 아이디가 FireBase에 있는지 확인
   const findId = async (id) => {
     const docRef = doc(firestore, 'members', id);
     const docSnap = await getDoc(docRef);
@@ -46,30 +52,29 @@ function Regist() {
   
   // 중복확인 후 메세지 출력
   const checkId = async () => {
-    // 1. 입력창에서 현재 아이디 값을 가져오기
     const inputId = document.getElementById('userid').value;
-    
     const msgSpan = document.getElementById('id-msg');
     
-    // 2. 빈 값인지 검사
     if (inputId === '') {
       msgSpan.innerText = '아이디를 입력해주세요.';
       msgSpan.style.color = 'red';
+      setIsIdChecked(false);
       return;
     }
     
-    // 3. findId() 함수를 이용해서 아이디 존재 여부 확인
     const isExist = await findId(inputId);
     
-    // 4. 존재 여부에 따라 메시지 출력
     if (isExist) {
       msgSpan.innerText = '❌ 이미 사용 중인 아이디입니다.';
       msgSpan.style.color = 'red';
+      // 🚩중복 id. 회원가입 불가
+      setIsIdChecked(false);
     }
     else {
       msgSpan.innerText = '✅ 사용 가능한 아이디입니다!';
       msgSpan.style.color = 'green';
-      setFormState(true);
+      // 🚩중복확인 완료. 회원가입가능
+      setIsIdChecked(true);
     }
   };
   
@@ -148,7 +153,7 @@ function Regist() {
     }).open();
   };
   
-   //  파이어베이스에 회원정보 저장.
+   //  🚩 파이어베이스에 회원정보 저장.
   const memberWrite = async (p_id, p_pass, p_name,
     p_email, p_phone, p_addr
   ) => {
@@ -172,11 +177,18 @@ function Regist() {
       <h2>🛫&nbsp;회원가입&nbsp;🛬</h2>
       <form onSubmit={(event) => {
         event.preventDefault();
+
+        // 🚩 중복확인을 안하면 회원가입 불가
+        if (!isIdChecked) {
+          alert("아이디 중복확인을 해주세요!");
+          return;
+        }
+
         //폼값 얻기
         let id = formState.id;
         let pass = formState.pw;
         let name = formState.name;
-
+        // 🚩 구조분해 할당.
         const { emailId, emailDomain } = formState;
         const email = `${emailId}@${emailDomain}`;
 
@@ -212,10 +224,9 @@ function Regist() {
             alert('주소를 입력하세요'); 
             return; 
         }
-      //회원정보 추가
+      // 🚩모든 검증이 끝난 후, 회원정보 추가
       memberWrite(id, pass, name, email, phone, addr);
 
-      // +로그인이 완료상태로 홈화면으로 들어가는 것을 구현하기
       alert('회원가입이 완료되었습니다.😀')
 
       navigate('/');

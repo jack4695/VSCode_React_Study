@@ -2,7 +2,7 @@ import './FreeRead.css';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {firestore} from '../../../firestoreConfig';
-import {addDoc, collection, doc, getDoc, setDoc} from 'firebase/firestore';
+import { doc, getDoc, setDoc} from 'firebase/firestore';
 
 function FreeEdit(props) {
 

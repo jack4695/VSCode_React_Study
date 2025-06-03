@@ -29,11 +29,15 @@ import DataBoard from './components/board/data/DataBoard';
 const Layout = () => {
   return (<>
     <div>
+
     <header><TopNavi /></header>
+
     <article>
       <Outlet />
     </article>
+    
     <footer><Footer /></footer>
+
     </div>
   </>);
 }

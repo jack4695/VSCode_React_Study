@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {firestore} from '../../../firestoreConfig';
-import {addDoc, collection, doc, setDoc} from 'firebase/firestore';
+import {addDoc, collection} from 'firebase/firestore';
 import './FreeWrite.css'; 
 
 function FreeWrite() {

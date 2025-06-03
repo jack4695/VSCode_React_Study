@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import './FreeBoard.css';
 import { Link } from 'react-router-dom';
-import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../../../firestoreConfig';
 import { Outlet } from 'react-router-dom';
 
+// 🚩 List(리스트)에 해당합니다.
 function FreeBoard(props) {
 
   const {formatDate} = props;
 
   const [posts, setPosts] = useState([]); // 게시물 목록을 담을 상태 변수
 
+  // 🚩 페이징 처리를 위한 변수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const postsPerPage = 5;                       // 한 페이지당 게시글 수
 

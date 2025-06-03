@@ -9,6 +9,7 @@ function TopNavi(props) {
 
   const [showBoardMenu, setShowBoardMenu] = useState(false);
 
+  // 🚩 로그인 상태 확인 
   const [inLogin, setInLogin] = useState(false);
 
   // 로그인 상태 확인. !!는 문자열이 있으면 true를 반환.
@@ -19,6 +20,7 @@ function TopNavi(props) {
 
   // 로그아웃 함수
   const goLogout = () => {
+    // 🚩 로컬스토리지에 저장된 데이터 삭제
     localStorage.clear();
     setInLogin(false);
 
@@ -41,12 +43,15 @@ function TopNavi(props) {
                   <NavLink to='/'><li className="nav-item"><div className="nav-link active" aria-current="page" href="#!">
                     홈</div></li></NavLink>
                   
+                   {/* 🚩 로그인 상태에 따라 상단메뉴가 다르게 보이도록 함  */}
                   {inLogin ? (<>
                     <NavLink to='/edit'><li className="nav-item"><div className="nav-link" href="#!"
                       >내정보</div></li></NavLink>
                     <NavLink to='/'><li className="nav-item"><div className="nav-link" href="#!"
                       onClick={goLogout}>로그아웃</div></li></NavLink>
+
                   </>) : (<>
+
                     <NavLink to='/login'><li className="nav-item"><div className="nav-link" href="#!">로그인</div></li></NavLink>
                   <NavLink to='/regist'><li className="nav-item"><div className="nav-link" href="#!">회원가입</div></li></NavLink>
                   </>)}

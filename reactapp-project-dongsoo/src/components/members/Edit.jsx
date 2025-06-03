@@ -10,7 +10,7 @@ function Edit() {
   const navigate = useNavigate();
 
   const [emailReadonly, setEmailReadonly] = useState(false);
-
+  // 🚩 마찬가지
   const [formState, setFormState] = useState({
     id: '',
     pw: '',
@@ -37,9 +37,8 @@ function Edit() {
   },[formState.pwCheck, formState.pw] )
 
 
-  /* ---------------------------------------------------------------- */
 
-  // 회원정보 가져오기
+  // 🚩 회원정보 가져오기
   useEffect(() => {
     const getUserData = async () => {
       const userId = JSON.parse(localStorage.getItem("user"));
@@ -50,6 +49,7 @@ function Edit() {
       if (docSnap.exists()) {
         const data = docSnap.data();
 
+        // 🚩 구분을 위한 특수문자를 이용하여 할당.
         const [emailId, emailDomain] = data.email.split('@');
         const [phone1, phone2, phone3] = data.phone.split('-');
         const [postcode, addr1, addr2] = data.addr.split('|');
@@ -77,12 +77,13 @@ function Edit() {
 
 
 
-  // 회원정보수정
+  // 회원 정보 수정
   const memberEdit = async () => {
+    // 🚩 localStorage.getItem이용하여 id를 가져옴
     const userId = JSON.parse(localStorage.getItem("user"));
 
     const docRef = doc(firestore, "members", userId);
-
+    // 🚩 수정된 데이터를 firebase에 저장
     await setDoc(docRef, {
       id: formState.id,
       pass: formState.pw,
