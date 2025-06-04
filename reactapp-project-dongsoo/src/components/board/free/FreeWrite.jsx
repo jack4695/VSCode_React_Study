@@ -19,10 +19,10 @@ function FreeWrite() {
     setFormState((prev)=> ({...prev, [id] : value}) );
   }
 
-   // 회원정보 가져오기 및 formState.writer에 설정
+  
+  // 🚩 로컬스토리지에 저장된 user ID를 formState.writer에 설정
   useEffect(() => {
     const userId = JSON.parse(localStorage.getItem("user"));
-    // user ID를 formState.writer에 설정
     if (userId) {
       setFormState((prev) => ({
         ...prev,
@@ -37,6 +37,8 @@ function FreeWrite() {
   const posting = async (e) => {
     e.preventDefault();
 
+   /*  🚩 setDoc이 아닌 addDoc을 사용 -> 자동으로 문서 ID를 생성.
+    해당 문서 ID는 수정, 삭제 등의 기능에서 사용함. */
     await addDoc(collection(firestore, 'freeboard'), {
       title: formState.title,
       writer: formState.writer,

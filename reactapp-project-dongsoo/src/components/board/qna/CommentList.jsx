@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { firestore } from '../../../firestoreConfig';
 
@@ -16,7 +15,8 @@ function CommentList({ comments, fetchComments }) {
       else {
         await deleteDoc(doc(firestore, 'comments', id));
         alert('삭제되었습니다.🗑')
-        fetchComments(); //삭제 후 패치
+        // 🚩삭제 후 패치
+        fetchComments(); 
       }
   
     }
@@ -28,7 +28,6 @@ function CommentList({ comments, fetchComments }) {
         {comments.map((c) => (
           <li key={c.docId} className="comment-item">
             <strong>{c.writer}</strong> : {c.comment} <br />
-            <button onClick={() => commentDelete(c.docId)}>삭제</button>
             <button onClick={() => commentDelete(c.docId)}>삭제</button>
           </li>
         ))}

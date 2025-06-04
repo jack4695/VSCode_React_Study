@@ -13,13 +13,15 @@ const CommentModal = ({ id, fetchComments }) => {
   useEffect(() => {
     const nowUser = localStorage.getItem("user");
     if (nowUser) {
+      // 🚩 현재 로그인한 유저의 id가 작성자명에 자동입력.
       setWriter(nowUser);
     }
   }, []);
 
+  // 🚩 댓글 작성
   const addComment = async(e) => {
     e.preventDefault();
-
+    // 🚩 게시물 작성과 마찬가지로 addDoc 사용
     await addDoc(collection(firestore, 'comments'), {
       id,
       writer: writer,
@@ -30,6 +32,7 @@ const CommentModal = ({ id, fetchComments }) => {
 
     setCommentText('');
     alert('댓글 작성이 완료되었습니다!😁');
+    // 🚩작성 후 패치
     fetchComments();
   }
 

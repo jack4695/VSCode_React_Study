@@ -19,7 +19,7 @@ function FreeBoard(props) {
   // 게시물 데이터 가져오기
   useEffect(() => {
     const getBoardData = async () => {
-
+      // 🚩쿼리를 이용하여 정렬된 데이터를 가져옴
       const q = query(collection(firestore, "freeboard"), orderBy("createAt", "desc"));
         const querySnapshot = await getDocs(q);
 
@@ -42,13 +42,18 @@ function FreeBoard(props) {
     getBoardData();
   }, []);
 
-  // 총 페이지 수 계산
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+  // 🚩 페이징 처리
 
-  // 현재 페이지에 맞는 게시글 자르기
+  /* 만약에 currentPage = 2, postsPerPage = 5
+      -> 마지막 게시글의 '인덱스'는 10번째 */
   const indexOfLastPost = currentPage * postsPerPage;
+  // 10 - 5 => 페이지에서 보여줘야 할 게시글은 5번부터 5개
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  // 보여줄 만큼만 자르기
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  
+  // 총 페이지 수 계산, ceil(올림처리)
+  const totalPages = Math.ceil(posts.length / postsPerPage);
 
   // 페이지 번호 배열 생성
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);

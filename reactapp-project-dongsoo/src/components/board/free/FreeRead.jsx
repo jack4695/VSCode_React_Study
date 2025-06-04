@@ -16,15 +16,15 @@ function FreeRead(props) {
 
   const { id } = useParams();
 
+  
+  const [inLogin, setInLogin] = useState(false);
+  
+  const [isMine, setIsMine] = useState(false);
+  
+  // 🚩로컬스토리지에서 userId 가져옴
   const userId = JSON.parse(localStorage.getItem("user"));
 
-  const [inLogin, setInLogin] = useState(false);
-
-  const [isMine, setIsMine] = useState(false);
-
-
-    // 로그인 상태 + 게시글이 작성자 본인인지 확인
-   // 회원정보 가져오기 및 formState.writer에 설정
+   // 게시물 정보 가져오기
   useEffect(() => {
     if(userId) {
       setInLogin(true);
@@ -45,6 +45,7 @@ function FreeRead(props) {
           content: data.content,
         })
 
+        // 🚩게시글이 작성자 본인인지 확인
         if(data.writer===userId) {
           setIsMine(true);
         }
@@ -103,13 +104,16 @@ function FreeRead(props) {
           ></textarea>
         </div>
         <div className="form-actions">
+        {/* 🚩작성자 본인이어야 수정, 삭제 버튼이 노출 */}
         {isMine ? (<>
           <Link to={`/free/edit/${id}`}>
             <button type="button" className="btn btn-primary1">수정</button>
           </Link>
           <button type="button" className="btn btn-primary2"
             onClick={postDelete}>삭제</button>
+
         </>) : (<>
+        
           <Link to="/free" className="btn btn-secondary">목록</Link>
         </>)}
         </div>

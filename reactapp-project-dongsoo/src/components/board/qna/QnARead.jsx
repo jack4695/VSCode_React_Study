@@ -2,7 +2,7 @@ import './QnARead.css';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {firestore} from '../../../firestoreConfig';
-import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, where} from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, where} from 'firebase/firestore';
 
 import CommentModal from './CommentModal';
 import CommentList from './CommentList';
@@ -28,8 +28,7 @@ function QnARead(props) {
   const [comments, setComments] = useState([]);
 
 
-    // 로그인 상태 + 게시글이 작성자 본인인지 확인
-   // 회원정보 가져오기 및 formState.writer에 설정
+
   useEffect(() => {
     if(userId) {
       setInLogin(true);
@@ -73,9 +72,10 @@ function QnARead(props) {
 
   }
 
-
-  // 댓글 새로고침 (props로 넘겨줄거임)
+   /* 🚩댓글 새로고침 (props로 하위 컴포넌트에 넘겨줌)
+    댓글 작성, 삭제 후 곧바로 렌더링되기 위함 */
   const fetchComments = async () => {
+    // 마찬가지로 순서 정렬
     const q = query(
       collection(firestore, 'comments'),
       where('id', '==', id),
@@ -86,6 +86,7 @@ function QnARead(props) {
       ...doc.data(),
       docId: doc.id,
     }));
+    //댓글 상태 변경
     setComments(commentData);
   };
 
@@ -129,13 +130,16 @@ function QnARead(props) {
           ></textarea>
         </div>
         <div className="form-actions">
+        {/* 🚩 마찬가지로 댓글 작성자 본인만 수정 삭제 가능. */}
         {isMine ? (<>
           <Link to={`/qna/edit/${id}`}>
             <button type="button" className="btn btn-primary1">수정</button>
           </Link>
           <button type="button" className="btn btn-primary2"
             onClick={postDelete}>삭제</button>
+
         </>) : (<>
+
           <Link to="/qna" className="btn btn-secondary">목록</Link>
         </>)}
         </div>
@@ -146,7 +150,9 @@ function QnARead(props) {
     <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">
       댓글 작성
     </button>
+    {/* 🚩useParams으로 가져온 게시물 고유 id */}
     <CommentModal id={id} fetchComments={fetchComments} />
+    {/* useState 댓글 상태 */}
     <CommentList comments={comments} fetchComments={fetchComments} />
   </>); 
 }
